@@ -8,6 +8,9 @@ const select2 = document.getElementById("select_2");
 
 // Buttons
 const translateBtn = document.getElementById("translateBtn");
+const switchBtn = document.querySelector(".fa-exchange-alt");
+const copyFrom = document.querySelector("#copy-from");
+const copyTo = document.querySelector("#copy-to");
 
 // First language select
 Object.values(countries).forEach((country) => {
@@ -43,6 +46,14 @@ const translate = async function (text, langPair) {
   }
 };
 
+const copyText = function (input) {
+  input.select();
+  input.setSelectionRange(0, 99999);
+  navigator.clipboard.writeText(input.value);
+
+  alert(`Copied: ${input.value}`);
+};
+
 translateBtn.addEventListener("click", () => {
   // find object key from country value.
   const lang1 = Object.keys(countries)
@@ -56,4 +67,18 @@ translateBtn.addEventListener("click", () => {
   const langPair = `${lang1}|${lang2}`;
 
   translate(textFrom.value, langPair).then((res) => (textTo.textContent = res));
+});
+
+switchBtn.addEventListener("click", () => {
+  [select1.value, select2.value] = [select2.value, select1.value]; // Swap variables without temporary 3rd variable
+});
+
+copyFrom.addEventListener("click", () => {
+  if (textFrom.value === "") return;
+  copyText(textFrom);
+});
+
+copyTo.addEventListener("click", () => {
+  if (textTo.textContent === "") return;
+  copyText(textTo);
 });
