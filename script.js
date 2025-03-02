@@ -1,3 +1,5 @@
+const container = document.querySelector(".container");
+
 // Input/Output
 const textFrom = document.querySelector(".from-text");
 const textTo = document.querySelector(".to-text");
@@ -5,12 +7,6 @@ const textTo = document.querySelector(".to-text");
 // Language Selectors
 const select1 = document.getElementById("select_1");
 const select2 = document.getElementById("select_2");
-
-// Buttons
-const translateBtn = document.getElementById("translateBtn");
-const switchBtn = document.querySelector(".fa-exchange-alt");
-const copyFrom = document.querySelector("#copy-from");
-const copyTo = document.querySelector("#copy-to");
 
 // First language select
 Object.values(countries).forEach((country) => {
@@ -54,31 +50,40 @@ const copyText = function (input) {
   alert(`Copied: ${input.value}`);
 };
 
-translateBtn.addEventListener("click", () => {
-  // find object key from country value.
-  const lang1 = Object.keys(countries)
-    .find((k) => countries[k] === select1.value)
-    .slice(0, 2);
+// Event Delegation
+container.addEventListener("click", (e) => {
+  // Switch button
+  if (e.target.classList.contains("fa-exchange-alt")) {
+    [select1.value, select2.value] = [select2.value, select1.value]; // Swap variables without temporary 3rd variable
+  }
 
-  const lang2 = Object.keys(countries)
-    .find((k) => countries[k] === select2.value)
-    .slice(0, 2);
+  // Copy button Resulting Text
+  if (e.target.id === "copy-to") {
+    if (textTo.textContent === "") return;
+    copyText(textTo);
+  }
 
-  const langPair = `${lang1}|${lang2}`;
+  // Copy button Typed Text
+  if (e.target.id === "copy-from") {
+    if (textFrom.value === "") return;
+    copyText(textFrom);
+  }
 
-  translate(textFrom.value, langPair).then((res) => (textTo.textContent = res));
-});
+  // Main Translate Button
+  if (e.target.id === "translateBtn") {
+    // find object key from country value.
+    const lang1 = Object.keys(countries)
+      .find((k) => countries[k] === select1.value)
+      .slice(0, 2);
 
-switchBtn.addEventListener("click", () => {
-  [select1.value, select2.value] = [select2.value, select1.value]; // Swap variables without temporary 3rd variable
-});
+    const lang2 = Object.keys(countries)
+      .find((k) => countries[k] === select2.value)
+      .slice(0, 2);
 
-copyFrom.addEventListener("click", () => {
-  if (textFrom.value === "") return;
-  copyText(textFrom);
-});
+    const langPair = `${lang1}|${lang2}`;
 
-copyTo.addEventListener("click", () => {
-  if (textTo.textContent === "") return;
-  copyText(textTo);
+    translate(textFrom.value, langPair).then(
+      (res) => (textTo.textContent = res)
+    );
+  }
 });
